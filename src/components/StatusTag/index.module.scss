@@ -1,0 +1,31 @@
+@use '@/styles/variables.scss' as *;
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: $radius-round;
+  border: 2rpx solid transparent;
+  gap: 8rpx;
+}
+
+.tagSmall {
+  padding: 2rpx 12rpx;
+}
+
+.dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: $radius-round;
+  flex-shrink: 0;
+}
+
+.text {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.textSmall {
+  font-size: $font-size-xs;
+}

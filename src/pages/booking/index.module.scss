@@ -1,0 +1,222 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 180rpx;
+}
+
+.formSection {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  margin: $spacing-md $spacing-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.sectionIcon {
+  font-size: $font-size-lg;
+}
+
+.formItem {
+  margin-bottom: $spacing-lg;
+}
+
+.formLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: 12rpx;
+  display: flex;
+  align-items: center;
+}
+
+.required {
+  color: $color-error;
+  margin-right: 8rpx;
+}
+
+.formInput {
+  width: 100%;
+  height: $button-height-md;
+  background: $color-bg-page;
+  border-radius: $radius-sm;
+  padding: 0 $spacing-lg;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  box-sizing: border-box;
+  border: 2rpx solid $color-border;
+  transition: border-color $transition-base;
+
+  &:focus {
+    border-color: $color-primary;
+  }
+}
+
+.pickerTrigger {
+  width: 100%;
+  height: $button-height-md;
+  background: $color-bg-page;
+  border-radius: $radius-sm;
+  padding: 0 $spacing-lg;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  box-sizing: border-box;
+  border: 2rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pickerArrow {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.pickerPlaceholder {
+  color: $color-text-disabled;
+}
+
+.timeRow {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.timeCol {
+  flex: 1;
+}
+
+.allocateSection {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  margin: $spacing-md $spacing-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.allocateBtn {
+  width: 100%;
+  height: $button-height-md;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-button;
+  @include flex-center;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.allocateBtnText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-white;
+  white-space: nowrap;
+}
+
+.allocateResult {
+  margin-top: $spacing-lg;
+  padding: $spacing-lg;
+  background: rgba($color-primary, 0.04);
+  border-radius: $radius-md;
+  border: 2rpx solid rgba($color-primary, 0.15);
+}
+
+.allocateResultTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-primary;
+  margin-bottom: $spacing-md;
+}
+
+.allocateResultRow {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.allocateResultIcon {
+  font-size: $font-size-md;
+  flex-shrink: 0;
+}
+
+.allocateResultText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.allocateResultEmpty {
+  margin-top: $spacing-lg;
+  padding: $spacing-lg;
+  background: rgba($color-error, 0.04);
+  border-radius: $radius-md;
+  border: 2rpx solid rgba($color-error, 0.15);
+  text-align: center;
+}
+
+.allocateResultEmptyText {
+  font-size: $font-size-sm;
+  color: $color-error;
+}
+
+.securityTip {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-warning, 0.06);
+  border-radius: $radius-sm;
+}
+
+.securityTipText {
+  font-size: $font-size-xs;
+  color: $color-warning;
+  line-height: $line-height-loose;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: calc(#{$spacing-md} + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: $spacing-md;
+}
+
+.submitBtn {
+  flex: 1;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-button;
+  @include flex-center;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.submitBtnDisabled {
+  background: $color-text-disabled;
+}
+
+.submitBtnText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  color: $color-text-white;
+  white-space: nowrap;
+}

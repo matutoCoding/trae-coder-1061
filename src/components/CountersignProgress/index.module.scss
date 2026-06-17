@@ -1,0 +1,88 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+}
+
+.roleWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.roleItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.iconCircle {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-round;
+  @include flex-center;
+  border: 3rpx solid $color-border;
+  background: $color-bg-card;
+  transition: all $transition-base;
+}
+
+.approved {
+  border-color: $color-success;
+  background: rgba($color-success, 0.08);
+}
+
+.rejected {
+  border-color: $color-error;
+  background: rgba($color-error, 0.08);
+}
+
+.pending {
+  border-color: $color-warning;
+  background: rgba($color-warning, 0.06);
+}
+
+.roleIcon {
+  font-size: 32rpx;
+}
+
+.roleLabel {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  white-space: nowrap;
+}
+
+.statusText {
+  font-size: $font-size-xs;
+  white-space: nowrap;
+  font-weight: $font-weight-medium;
+}
+
+.statusTextApproved {
+  color: $color-success;
+}
+
+.statusTextRejected {
+  color: $color-error;
+}
+
+.statusTextPending {
+  color: $color-warning;
+}
+
+.connector {
+  flex: 1;
+  height: 4rpx;
+  background: $color-border;
+  margin: 0 8rpx;
+  margin-bottom: 40rpx;
+  border-radius: 2rpx;
+  transition: background $transition-base;
+}
+
+.connectorApproved {
+  background: $color-success;
+}

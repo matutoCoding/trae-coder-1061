@@ -1,0 +1,269 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-xl $spacing-lg 120rpx;
+  position: relative;
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.headerTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}
+
+.headerDate {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 8rpx;
+}
+
+.headerBadge {
+  padding: 8rpx 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-round;
+}
+
+.headerBadgeText {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+  white-space: nowrap;
+}
+
+.statsRow {
+  display: flex;
+  gap: $spacing-md;
+  margin: 0 $spacing-lg;
+  margin-top: -80rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.statCard {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg $spacing-md;
+  box-shadow: $shadow-card;
+  @include flex-center;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 8rpx;
+}
+
+.section {
+  padding: $spacing-xl $spacing-lg 0;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.sectionMore {
+  font-size: $font-size-sm;
+  color: $color-primary;
+}
+
+.scheduleList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.scheduleCard {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  align-items: center;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.95;
+    transform: scale(0.98);
+  }
+}
+
+.scheduleTime {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120rpx;
+  margin-right: $spacing-md;
+  flex-shrink: 0;
+}
+
+.scheduleTimeStart {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.scheduleTimeEnd {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.scheduleDivider {
+  width: 4rpx;
+  height: 64rpx;
+  background: $color-primary;
+  border-radius: 2rpx;
+  margin-right: $spacing-md;
+  opacity: 0.3;
+}
+
+.scheduleInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.scheduleTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  @include text-ellipsis;
+  margin-bottom: 8rpx;
+}
+
+.scheduleVenue {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  @include text-ellipsis;
+}
+
+.scheduleStatus {
+  padding: 8rpx 20rpx;
+  border-radius: $radius-round;
+  flex-shrink: 0;
+  margin-left: $spacing-sm;
+}
+
+.scheduleStatusPending {
+  background: rgba($color-warning, 0.1);
+}
+
+.scheduleStatusApproved {
+  background: rgba($color-success, 0.1);
+}
+
+.scheduleStatusRejected {
+  background: rgba($color-error, 0.1);
+}
+
+.scheduleStatusText {
+  font-size: $font-size-xs;
+  white-space: nowrap;
+  font-weight: $font-weight-medium;
+}
+
+.quickActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  padding: 0 $spacing-lg;
+  margin-top: $spacing-xl;
+}
+
+.quickAction {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.95;
+    transform: scale(0.98);
+  }
+}
+
+.quickActionIcon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-md;
+  @include flex-center;
+  font-size: 36rpx;
+}
+
+.quickActionIconBooking {
+  background: rgba($color-primary, 0.1);
+}
+
+.quickActionIconSchedule {
+  background: rgba($color-info, 0.1);
+}
+
+.quickActionIconApproval {
+  background: rgba($color-warning, 0.1);
+}
+
+.quickActionIconQuery {
+  background: rgba($color-success, 0.1);
+}
+
+.quickActionText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.quickActionDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.recentList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding-bottom: 48rpx;
+}
+
+.emptyTip {
+  text-align: center;
+  padding: 64rpx 0;
+}
+
+.emptyText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
