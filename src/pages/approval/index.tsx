@@ -77,7 +77,7 @@ const ApprovalPage: React.FC = () => {
             const nextRole = getNextPendingRole(approval);
 
             return (
-              <View key={approval.id} className={styles.card}>
+              <View key={approval.id} className={styles.card} onClick={() => Taro.navigateTo({ url: `/pages/approval-detail/index?id=${approval.id}` })}>
                 <View className={styles.cardHeader}>
                   <Text className={styles.cardTitle}>{approval.bookingTitle}</Text>
                   <StatusTag status={approval.overallStatus} label={config.label} color={config.color} size="small" />
@@ -128,10 +128,10 @@ const ApprovalPage: React.FC = () => {
                 </View>
                 {approval.overallStatus === 'pending' && nextRole && (
                   <View className={styles.actions}>
-                    <View className={styles.rejectBtn} onClick={() => handleReject(approval, nextRole)}>
+                    <View className={styles.rejectBtn} onClick={(e) => { e.stopPropagation(); handleReject(approval, nextRole); }}>
                       <Text className={styles.rejectBtnText}>一票否决</Text>
                     </View>
-                    <View className={styles.approveBtn} onClick={() => handleApprove(approval, nextRole)}>
+                    <View className={styles.approveBtn} onClick={(e) => { e.stopPropagation(); handleApprove(approval, nextRole); }}>
                       <Text className={styles.approveBtnText}>通过</Text>
                     </View>
                   </View>

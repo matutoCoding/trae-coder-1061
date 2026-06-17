@@ -62,6 +62,11 @@
   }
 }
 
+.formInputError {
+  border-color: $color-error;
+  background: rgba($color-error, 0.03);
+}
+
 .pickerTrigger {
   width: 100%;
   height: $button-height-md;
@@ -177,10 +182,26 @@
   border-radius: $radius-sm;
 }
 
+.securityTipInfo {
+  background: rgba($color-success, 0.06);
+}
+
+.securityTipDanger {
+  background: rgba($color-error, 0.06);
+}
+
 .securityTipText {
   font-size: $font-size-xs;
   color: $color-warning;
   line-height: $line-height-loose;
+}
+
+.securityTipTextInfo {
+  color: $color-success;
+}
+
+.securityTipTextDanger {
+  color: $color-error;
 }
 
 .bottomBar {

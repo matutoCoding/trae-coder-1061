@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, Input, Picker } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
@@ -6,6 +6,14 @@ import { useAppStore } from '@/store';
 import { VENUE_TYPE_LIST } from '@/types/venue';
 import { allocateVenue } from '@/utils/allocation';
 import styles from './index.module.scss';
+
+const calcMinSecurity = (attendees: number): number => {
+  if (attendees <= 0) return 1;
+  if (attendees <= 50) return 1;
+  if (attendees <= 100) return 2;
+  if (attendees <= 300) return 5;
+  return 10;
+};
 
 const BookingPage: React.FC = () => {
   const { createBookingWithApproval } = useAppStore();
@@ -24,6 +32,22 @@ const BookingPage: React.FC = () => {
   const [allocationFailed, setAllocationFailed] = useState(false);
 
   const venueTypeLabels = VENUE_TYPE_LIST.map((v) => v.label);
+
+  const attendeesNum = parseInt(expectedAttendees || '0', 10) || 0;
+  const minSecurity = useMemo(() => calcMinSecurity(attendeesNum), [attendeesNum]);
+  const securityNum = parseInt(securityRequired || '0', 10) || 0;
+  const securityInsufficient = securityNum > 0 && securityNum < minSecurity;
+
+  const handleAttendeesChange = (val: string) => {
+    setExpectedAttendees(val);
+    const num = parseInt(val || '0', 10) || 0;
+    if (num > 0) {
+      const suggested = calcMinSecurity(num);
+      if (!securityRequired || parseInt(securityRequired, 10) < suggested) {
+        setSecurityRequired(String(suggested));
+      }
+    }
+  };
 
   const handleAllocate = () => {
     if (!date || !startTime || !endTime) {
@@ -59,6 +83,24 @@ const BookingPage: React.FC = () => {
       Taro.showToast({ title: '请先进行智能分配', icon: 'none' });
       return;
     }
+    if (securityInsufficient) {
+      Taro.showModal({
+        title: '安保人数不足',
+        content: `当前活动预计${attendeesNum}人，最低需要${minSecurity}名安保人员，当前仅填写${securityNum}名。请补充安保人员后再提交。`,
+        showCancel: false,
+        confirmText: '返回修改',
+      });
+      return;
+    }
+    if (securityNum <= 0) {
+      Taro.showModal({
+        title: '安保人数未填写',
+        content: `当前活动预计${attendeesNum}人，建议至少${minSecurity}名安保人员，请填写安保人数后提交。`,
+        showCancel: false,
+        confirmText: '返回修改',
+      });
+      return;
+    }
 
     const result = createBookingWithApproval({
       title,
@@ -69,7 +111,7 @@ const BookingPage: React.FC = () => {
       date,
       startTime,
       endTime,
-      securityRequired: parseInt(securityRequired || '1', 10),
+      securityRequired: securityNum,
       purpose,
     });
 
@@ -83,7 +125,7 @@ const BookingPage: React.FC = () => {
     }
   };
 
-  const isFormValid = title && organizer && contactPhone && expectedAttendees && date && startTime && endTime && purpose && allocatedVenue;
+  const isFormValid = title && organizer && contactPhone && expectedAttendees && date && startTime && endTime && purpose && allocatedVenue && securityNum >= minSecurity;
 
   return (
     <View className={styles.container}>
@@ -130,7 +172,7 @@ const BookingPage: React.FC = () => {
             placeholder="请输入预计参与人数"
             type="number"
             value={expectedAttendees}
-            onInput={(e) => setExpectedAttendees(e.detail.value)}
+            onInput={(e) => handleAttendeesChange(e.detail.value)}
           />
         </View>
 
@@ -200,7 +242,7 @@ const BookingPage: React.FC = () => {
         <View className={styles.formItem}>
           <Text className={styles.formLabel}>安保人员数量</Text>
           <Input
-            className={styles.formInput}
+            className={classnames(styles.formInput, securityInsufficient && styles.formInputError)}
             placeholder="请输入安保人员数量"
             type="number"
             value={securityRequired}
@@ -208,11 +250,24 @@ const BookingPage: React.FC = () => {
           />
         </View>
 
-        <View className={styles.securityTip}>
-          <Text className={styles.securityTipText}>
-            安保人数由安保部门核定：50人以下至少1名，50-100人至少2名，100-300人至少5名，300人以上至少10名
-          </Text>
-        </View>
+        {attendeesNum > 0 && (
+          <View className={classnames(styles.securityTip, securityInsufficient ? styles.securityTipDanger : styles.securityTipInfo)}>
+            <Text className={classnames(styles.securityTipText, securityInsufficient ? styles.securityTipTextDanger : styles.securityTipTextInfo)}>
+              {securityInsufficient
+                ? `⚠️ 当前${attendeesNum}人活动至少需${minSecurity}名安保，当前仅${securityNum}名，请补充后再提交`
+                : `✅ 当前${attendeesNum}人活动建议至少${minSecurity}名安保人员（已满足）`
+              }
+            </Text>
+          </View>
+        )}
+
+        {attendeesNum <= 0 && (
+          <View className={styles.securityTip}>
+            <Text className={styles.securityTipText}>
+              安保人数标准：≤50人至少1名，51-100人至少2名，101-300人至少5名，300人以上至少10名
+            </Text>
+          </View>
+        )}
       </View>
 
       <View className={styles.allocateSection}>

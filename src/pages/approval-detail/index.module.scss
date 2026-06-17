@@ -3,25 +3,332 @@
 .container {
   min-height: 100vh;
   background: $color-bg-page;
-  @include flex-center;
-  flex-direction: column;
-  padding: 0 $spacing-lg;
+  padding-bottom: 200rpx;
 }
 
-.icon {
+.headerCard {
+  background: $color-bg-card;
+  margin: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.approvalTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  flex: 1;
+  margin-right: $spacing-sm;
+  @include text-ellipsis;
+}
+
+.approvalId {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.statusBadge {
+  padding: 6rpx 20rpx;
+  border-radius: $radius-round;
+  flex-shrink: 0;
+}
+
+.statusApproved {
+  background: rgba($color-success, 0.1);
+}
+
+.statusRejected {
+  background: rgba($color-error, 0.1);
+}
+
+.statusPending {
+  background: rgba($color-warning, 0.1);
+}
+
+.statusBadgeText {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.infoCard {
+  background: $color-bg-card;
+  margin: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.cardTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.infoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.infoIcon {
+  font-size: $font-size-md;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  width: 128rpx;
+  flex-shrink: 0;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  flex: 1;
+  line-height: $line-height-normal;
+}
+
+.approvalSteps {
+  margin-top: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+}
+
+.stepItem {
+  display: flex;
+  min-height: 120rpx;
+}
+
+.stepLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: $spacing-md;
+  width: 80rpx;
+  flex-shrink: 0;
+}
+
+.stepIcon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-round;
+  @include flex-center;
+  border: 3rpx solid $color-border;
+  background: $color-bg-card;
+  flex-shrink: 0;
+}
+
+.stepIconApproved {
+  border-color: $color-success;
+  background: rgba($color-success, 0.08);
+}
+
+.stepIconRejected {
+  border-color: $color-error;
+  background: rgba($color-error, 0.08);
+}
+
+.stepIconPending {
+  border-color: $color-warning;
+  background: rgba($color-warning, 0.06);
+}
+
+.stepEmoji {
+  font-size: 32rpx;
+}
+
+.stepLine {
+  width: 4rpx;
+  flex: 1;
+  background: $color-border;
+  margin: 8rpx 0;
+  border-radius: 2rpx;
+}
+
+.stepLineActive {
+  background: $color-success;
+}
+
+.stepContent {
+  flex: 1;
+  padding-bottom: $spacing-lg;
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.stepRole {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.stepApprover {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  flex: 1;
+}
+
+.stepStatus {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.stepStatusApproved {
+  color: $color-success;
+}
+
+.stepStatusRejected {
+  color: $color-error;
+}
+
+.stepStatusPending {
+  color: $color-warning;
+}
+
+.stepComment {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.stepTime {
+  font-size: $font-size-xs;
+  color: $color-text-disabled;
+  display: block;
+}
+
+.rejectNotice {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-error, 0.06);
+  border-radius: $radius-sm;
+  border: 2rpx solid rgba($color-error, 0.15);
+}
+
+.rejectNoticeText {
+  font-size: $font-size-sm;
+  color: $color-error;
+  line-height: $line-height-loose;
+}
+
+.approveNotice {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-success, 0.06);
+  border-radius: $radius-sm;
+  border: 2rpx solid rgba($color-success, 0.15);
+}
+
+.approveNoticeText {
+  font-size: $font-size-sm;
+  color: $color-success;
+  line-height: $line-height-loose;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: calc(#{$spacing-md} + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: $spacing-md;
+}
+
+.rejectBtn {
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  @include flex-center;
+  background: $color-bg-card;
+  border: 2rpx solid $color-error;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.rejectBtnText {
+  font-size: $font-size-lg;
+  color: $color-error;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.approveBtn {
+  flex: 2;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  @include flex-center;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.approveBtnText {
+  font-size: $font-size-lg;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.footerCard {
+  margin: 0 $spacing-lg;
+  padding: $spacing-md 0;
+}
+
+.footerText {
+  font-size: $font-size-xs;
+  color: $color-text-disabled;
+  text-align: center;
+}
+
+.empty {
+  min-height: 100vh;
+  @include flex-center;
+  flex-direction: column;
+}
+
+.emptyIcon {
   font-size: 80rpx;
   margin-bottom: $spacing-lg;
 }
 
-.title {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  margin-bottom: $spacing-sm;
-}
-
-.desc {
+.emptyText {
   font-size: $font-size-md;
   color: $color-text-tertiary;
-  line-height: $line-height-loose;
 }

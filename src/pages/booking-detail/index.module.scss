@@ -3,25 +3,219 @@
 .container {
   min-height: 100vh;
   background: $color-bg-page;
-  @include flex-center;
-  flex-direction: column;
-  padding: 0 $spacing-lg;
+  padding-bottom: 64rpx;
 }
 
-.icon {
+.headerCard {
+  background: $color-bg-card;
+  margin: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.bookingTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  flex: 1;
+  margin-right: $spacing-sm;
+  @include text-ellipsis;
+}
+
+.bookingId {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.infoCard {
+  background: $color-bg-card;
+  margin: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.cardTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.infoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.infoIcon {
+  font-size: $font-size-md;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  width: 128rpx;
+  flex-shrink: 0;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  flex: 1;
+  line-height: $line-height-normal;
+}
+
+.securityBar {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-primary, 0.04);
+  border-radius: $radius-sm;
+}
+
+.securityBarText {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+}
+
+.approvalDetail {
+  margin-top: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.approvalItem {
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-sm;
+}
+
+.approvalItemHeader {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.approvalDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+  flex-shrink: 0;
+}
+
+.approvalRole {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.approvalName {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  flex: 1;
+}
+
+.approvalStatus {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.statusApproved {
+  color: $color-success;
+}
+
+.statusRejected {
+  color: $color-error;
+}
+
+.statusPending {
+  color: $color-warning;
+}
+
+.approvalComment {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.approvalTime {
+  font-size: $font-size-xs;
+  color: $color-text-disabled;
+  display: block;
+}
+
+.rejectNotice {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-error, 0.06);
+  border-radius: $radius-sm;
+  border: 2rpx solid rgba($color-error, 0.15);
+}
+
+.rejectNoticeText {
+  font-size: $font-size-sm;
+  color: $color-error;
+  line-height: $line-height-loose;
+}
+
+.approveNotice {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-success, 0.06);
+  border-radius: $radius-sm;
+  border: 2rpx solid rgba($color-success, 0.15);
+}
+
+.approveNoticeText {
+  font-size: $font-size-sm;
+  color: $color-success;
+  line-height: $line-height-loose;
+}
+
+.footerCard {
+  margin: 0 $spacing-lg;
+  padding: $spacing-md 0;
+}
+
+.footerText {
+  font-size: $font-size-xs;
+  color: $color-text-disabled;
+  text-align: center;
+}
+
+.empty {
+  min-height: 100vh;
+  @include flex-center;
+  flex-direction: column;
+}
+
+.emptyIcon {
   font-size: 80rpx;
   margin-bottom: $spacing-lg;
 }
 
-.title {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  margin-bottom: $spacing-sm;
-}
-
-.desc {
+.emptyText {
   font-size: $font-size-md;
   color: $color-text-tertiary;
-  line-height: $line-height-loose;
 }

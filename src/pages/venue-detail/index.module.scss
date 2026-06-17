@@ -3,25 +3,203 @@
 .container {
   min-height: 100vh;
   background: $color-bg-page;
-  @include flex-center;
-  flex-direction: column;
-  padding: 0 $spacing-lg;
+  padding-bottom: 64rpx;
 }
 
-.icon {
+.coverImage {
+  width: 100%;
+  height: 400rpx;
+}
+
+.infoCard {
+  background: $color-bg-card;
+  margin: -60rpx $spacing-lg 0;
+  position: relative;
+  z-index: 1;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.venueName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  flex: 1;
+  margin-right: $spacing-sm;
+  @include text-ellipsis;
+}
+
+.venueType {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  margin-bottom: $spacing-md;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.infoIcon {
+  font-size: $font-size-md;
+  flex-shrink: 0;
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  width: 64rpx;
+  flex-shrink: 0;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  flex: 1;
+}
+
+.descCard {
+  background: $color-bg-card;
+  margin: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.cardTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.descText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+}
+
+.facilitiesCard {
+  background: $color-bg-card;
+  margin: 0 $spacing-lg;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.facilitiesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.facility {
+  padding: 8rpx 24rpx;
+  background: rgba($color-primary, 0.06);
+  border-radius: $radius-round;
+}
+
+.facilityText {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  white-space: nowrap;
+}
+
+.scheduleCard {
+  background: $color-bg-card;
+  margin: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.scheduleList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.scheduleItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-sm;
+}
+
+.scheduleTime {
+  display: flex;
+  flex-direction: column;
+  margin-right: $spacing-md;
+  min-width: 120rpx;
+}
+
+.scheduleDate {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.scheduleSlot {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.scheduleInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.scheduleTitle {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  @include text-ellipsis;
+  display: block;
+}
+
+.scheduleOrganizer {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  @include text-ellipsis;
+  display: block;
+  margin-top: 4rpx;
+}
+
+.emptySchedule {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  text-align: center;
+  padding: 32rpx 0;
+}
+
+.empty {
+  min-height: 100vh;
+  @include flex-center;
+  flex-direction: column;
+}
+
+.emptyIcon {
   font-size: 80rpx;
   margin-bottom: $spacing-lg;
 }
 
-.title {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  margin-bottom: $spacing-sm;
-}
-
-.desc {
+.emptyText {
   font-size: $font-size-md;
   color: $color-text-tertiary;
-  line-height: $line-height-loose;
 }

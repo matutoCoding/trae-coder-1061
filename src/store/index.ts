@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import Taro from '@tarojs/taro';
 import { Venue } from '@/types/venue';
 import { Booking } from '@/types/booking';
 import { Approval, ApprovalRole } from '@/types/approval';
@@ -7,6 +8,31 @@ import { mockBookings } from '@/data/bookings';
 import { mockApprovals } from '@/data/approvals';
 import { allocateVenue } from '@/utils/allocation';
 import { generateId } from '@/utils/format';
+
+const STORAGE_KEY = 'fitness_center_app_state';
+
+const loadPersistedState = (): { bookings: Booking[]; approvals: Approval[] } | null => {
+  try {
+    const raw = Taro.getStorageSync(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { bookings: parsed.bookings || [], approvals: parsed.approvals || [] };
+    }
+  } catch (e) {
+    console.error('[Store] Failed to load persisted state:', e);
+  }
+  return null;
+};
+
+const persistState = (bookings: Booking[], approvals: Approval[]) => {
+  try {
+    Taro.setStorageSync(STORAGE_KEY, JSON.stringify({ bookings, approvals }));
+  } catch (e) {
+    console.error('[Store] Failed to persist state:', e);
+  }
+};
+
+const persisted = loadPersistedState();
 
 interface AppState {
   venues: Venue[];
@@ -24,24 +50,35 @@ interface AppState {
 
 export const useAppStore = create<AppState>((set, get) => ({
   venues: mockVenues,
-  bookings: mockBookings,
-  approvals: mockApprovals,
+  bookings: persisted?.bookings || mockBookings,
+  approvals: persisted?.approvals || mockApprovals,
 
   addBooking: (booking) =>
-    set((state) => ({ bookings: [...state.bookings, booking] })),
+    set((state) => {
+      const bookings = [...state.bookings, booking];
+      persistState(bookings, state.approvals);
+      return { bookings };
+    }),
 
   updateBooking: (id, updates) =>
-    set((state) => ({
-      bookings: state.bookings.map((b) =>
+    set((state) => {
+      const bookings = state.bookings.map((b) =>
         b.id === id ? { ...b, ...updates } : b
-      ),
-    })),
+      );
+      persistState(bookings, state.approvals);
+      return { bookings };
+    }),
 
   addApproval: (approval) =>
-    set((state) => ({ approvals: [...state.approvals, approval] })),
+    set((state) => {
+      const approvals = [...state.approvals, approval];
+      persistState(state.bookings, approvals);
+      return { approvals };
+    }),
 
   approveItem: (approvalId, role) =>
     set((state) => {
+      let updatedBookings = [...state.bookings];
       const approvals = state.approvals.map((a) => {
         if (a.id !== approvalId) return a;
 
@@ -58,28 +95,26 @@ export const useAppStore = create<AppState>((set, get) => ({
         if (allApproved) overallStatus = 'approved';
         else if (anyRejected) overallStatus = 'rejected';
 
-        const updatedApproval = { ...a, approvals: newApprovals, overallStatus };
-
         if (overallStatus === 'approved') {
-          const bookingId = a.bookingId;
-          state.bookings = state.bookings.map((b) =>
-            b.id === bookingId ? { ...b, status: 'approved' as const } : b
+          updatedBookings = updatedBookings.map((b) =>
+            b.id === a.bookingId ? { ...b, status: 'approved' as const } : b
           );
         } else if (overallStatus === 'rejected') {
-          const bookingId = a.bookingId;
-          state.bookings = state.bookings.map((b) =>
-            b.id === bookingId ? { ...b, status: 'rejected' as const } : b
+          updatedBookings = updatedBookings.map((b) =>
+            b.id === a.bookingId ? { ...b, status: 'rejected' as const } : b
           );
         }
 
-        return updatedApproval;
+        return { ...a, approvals: newApprovals, overallStatus };
       });
 
-      return { approvals, bookings: state.bookings };
+      persistState(updatedBookings, approvals);
+      return { approvals, bookings: updatedBookings };
     }),
 
   rejectItem: (approvalId, role, comment) =>
     set((state) => {
+      let updatedBookings = [...state.bookings];
       const approvals = state.approvals.map((a) => {
         if (a.id !== approvalId) return a;
 
@@ -89,15 +124,15 @@ export const useAppStore = create<AppState>((set, get) => ({
             : item
         );
 
-        const bookingId = a.bookingId;
-        state.bookings = state.bookings.map((b) =>
-          b.id === bookingId ? { ...b, status: 'rejected' as const } : b
+        updatedBookings = updatedBookings.map((b) =>
+          b.id === a.bookingId ? { ...b, status: 'rejected' as const } : b
         );
 
         return { ...a, approvals: newApprovals, overallStatus: 'rejected' as const };
       });
 
-      return { approvals, bookings: state.bookings };
+      persistState(updatedBookings, approvals);
+      return { approvals, bookings: updatedBookings };
     }),
 
   autoAllocate: (venueType, date, startTime, endTime) => {
@@ -148,10 +183,12 @@ export const useAppStore = create<AppState>((set, get) => ({
       createdAt: new Date().toLocaleString(),
     };
 
-    set((state) => ({
-      bookings: [...state.bookings, booking],
-      approvals: [...state.approvals, approval],
-    }));
+    set((state) => {
+      const bookings = [...state.bookings, booking];
+      const approvals = [...state.approvals, approval];
+      persistState(bookings, approvals);
+      return { bookings, approvals };
+    });
 
     console.info('[Booking] Created booking and approval:', { bookingId, approvalId, venue: venue.name });
     return { booking, approval };
