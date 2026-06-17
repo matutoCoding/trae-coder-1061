@@ -175,6 +175,20 @@
   color: $color-error;
 }
 
+.allocateStale {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-warning, 0.06);
+  border-radius: $radius-sm;
+  border: 2rpx dashed rgba($color-warning, 0.3);
+}
+
+.allocateStaleText {
+  font-size: $font-size-xs;
+  color: $color-warning;
+  line-height: $line-height-loose;
+}
+
 .securityTip {
   margin-top: $spacing-md;
   padding: $spacing-md;

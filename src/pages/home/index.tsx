@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, Picker } from '@tarojs/components';
+import { View, Text, Image, ScrollView, Picker } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAppStore } from '@/store';
 import { formatDate, getWeekday } from '@/utils/format';
 import { BOOKING_STATUS_LABELS, BOOKING_STATUS_COLORS } from '@/types/booking';
+import { VENUE_TYPE_LABELS } from '@/types/venue';
 import dayjs from 'dayjs';
 import styles from './index.module.scss';
 
@@ -193,6 +194,29 @@ const HomePage: React.FC = () => {
             <Text className={styles.emptyText}>当日暂无排期</Text>
           </View>
         )}
+      </View>
+
+      <View className={styles.section}>
+        <View className={styles.sectionHeader}>
+          <Text className={styles.sectionTitle}>场馆快速查看</Text>
+          <Text className={styles.sectionMore} onClick={() => Taro.navigateTo({ url: '/pages/venues/index' })}>全部场馆 →</Text>
+        </View>
+        <ScrollView scrollX className={styles.venueScroll}>
+          {venues.map((venue) => (
+            <View
+              key={venue.id}
+              className={styles.venueQuickCard}
+              onClick={() => Taro.navigateTo({ url: `/pages/venue-detail/index?id=${venue.id}` })}
+            >
+              <Image className={styles.venueQuickImage} src={venue.image} mode="aspectFill" />
+              <View className={styles.venueQuickInfo}>
+                <Text className={styles.venueQuickName} numberOfLines={1}>{venue.name}</Text>
+                <Text className={styles.venueQuickType}>{VENUE_TYPE_LABELS[venue.type]}</Text>
+                <Text className={styles.venueQuickCapacity}>容纳 {venue.capacity} 人</Text>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
       </View>
 
       <View className={styles.section}>

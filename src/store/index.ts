@@ -34,10 +34,19 @@ const persistState = (bookings: Booking[], approvals: Approval[]) => {
 
 const persisted = loadPersistedState();
 
+interface BookingPrefill {
+  venueType?: Venue['type'];
+  date?: string;
+  startTime?: string;
+  endTime?: string;
+  sourceVenueId?: string;
+}
+
 interface AppState {
   venues: Venue[];
   bookings: Booking[];
   approvals: Approval[];
+  bookingPrefill: BookingPrefill | null;
 
   addBooking: (booking: Booking) => void;
   updateBooking: (id: string, updates: Partial<Booking>) => void;
@@ -46,6 +55,8 @@ interface AppState {
   rejectItem: (approvalId: string, role: ApprovalRole, comment: string) => void;
   autoAllocate: (venueType: Venue['type'], date: string, startTime: string, endTime: string) => Venue | null;
   createBookingWithApproval: (bookingData: Omit<Booking, 'id' | 'status' | 'assignedVenueId' | 'assignedVenueName' | 'createdAt'>, venueId?: string) => { booking: Booking; approval: Approval } | null;
+  setBookingPrefill: (prefill: BookingPrefill) => void;
+  clearBookingPrefill: () => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -213,4 +224,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     console.info('[Booking] Created booking and approval:', { bookingId, approvalId, venue: venue.name });
     return { booking, approval };
   },
+
+  setBookingPrefill: (prefill) =>
+    set(() => ({
+      bookingPrefill: prefill,
+    })),
+
+  clearBookingPrefill: () =>
+    set(() => ({
+      bookingPrefill: null,
+    })),
 }));

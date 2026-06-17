@@ -74,6 +74,13 @@ const VenueDetailPage: React.FC = () => {
   const handleSlotClick = (slot: { start: string; end: string }) => {
     if (slot.booking) return;
     const venueTypeValue = venue?.type || 'basketball';
+    useAppStore.getState().setBookingPrefill({
+      venueType: venueTypeValue,
+      date: selectedDate,
+      startTime: slot.start,
+      endTime: slot.end,
+      sourceVenueId: venue?.id,
+    });
     Taro.switchTab({
       url: '/pages/booking/index',
       success: () => {

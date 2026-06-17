@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { View, Text, Input, Picker } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import classnames from 'classnames';
 import { useAppStore } from '@/store';
 import { VENUE_TYPE_LIST } from '@/types/venue';
@@ -16,7 +16,8 @@ const calcMinSecurity = (attendees: number): number => {
 };
 
 const BookingPage: React.FC = () => {
-  const { createBookingWithApproval } = useAppStore();
+  const { createBookingWithApproval, bookingPrefill, clearBookingPrefill } = useAppStore();
+  const hasInitialized = useRef(false);
 
   const [title, setTitle] = useState('');
   const [organizer, setOrganizer] = useState('');
@@ -30,6 +31,25 @@ const BookingPage: React.FC = () => {
   const [securityRequired, setSecurityRequired] = useState('');
   const [allocatedVenue, setAllocatedVenue] = useState<{ id: string; name: string; location: string; capacity: number } | null>(null);
   const [allocationFailed, setAllocationFailed] = useState(false);
+  const [allocationStale, setAllocationStale] = useState(false);
+  const [sourceVenueId, setSourceVenueId] = useState<string | null>(null);
+
+  useDidShow(() => {
+    if (hasInitialized.current) return;
+    const prefill = useAppStore.getState().bookingPrefill;
+    if (prefill) {
+      console.info('[Booking] Applied prefill:', prefill);
+      if (prefill.venueType) {
+        const idx = VENUE_TYPE_LIST.findIndex((v) => v.value === prefill.venueType);
+        if (idx >= 0) setVenueTypeIndex(idx);
+      }
+      if (prefill.date) setDate(prefill.date);
+      if (prefill.startTime) setStartTime(prefill.startTime);
+      if (prefill.endTime) setEndTime(prefill.endTime);
+      if (prefill.sourceVenueId) setSourceVenueId(prefill.sourceVenueId);
+      hasInitialized.current = true;
+    }
+  });
 
   const venueTypeLabels = VENUE_TYPE_LIST.map((v) => v.label);
 
@@ -66,12 +86,22 @@ const BookingPage: React.FC = () => {
     if (result) {
       setAllocatedVenue({ id: result.id, name: result.name, location: result.location, capacity: result.capacity });
       setAllocationFailed(false);
+      setAllocationStale(false);
       console.info('[Booking] Allocated venue:', result.name);
     } else {
       setAllocatedVenue(null);
       setAllocationFailed(true);
+      setAllocationStale(false);
       console.info('[Booking] No available venue found');
     }
+  };
+
+  const invalidateAllocation = () => {
+    if (allocatedVenue) {
+      setAllocationStale(true);
+    }
+    setAllocatedVenue(null);
+    setAllocationFailed(false);
   };
 
   const handleSubmit = () => {
@@ -116,9 +146,21 @@ const BookingPage: React.FC = () => {
     }, allocatedVenue?.id);
 
     if (result) {
+      clearBookingPrefill();
       Taro.showToast({ title: '预订提交成功', icon: 'success' });
       setTimeout(() => {
-        Taro.switchTab({ url: '/pages/approval/index' });
+        if (sourceVenueId) {
+          Taro.switchTab({
+            url: '/pages/home/index',
+            success: () => {
+              setTimeout(() => {
+                Taro.navigateTo({ url: `/pages/venue-detail/index?id=${sourceVenueId}` });
+              }, 100);
+            },
+          });
+        } else {
+          Taro.switchTab({ url: '/pages/approval/index' });
+        }
       }, 1500);
     } else {
       Taro.showToast({ title: '暂无空闲场馆', icon: 'none' });
@@ -194,7 +236,7 @@ const BookingPage: React.FC = () => {
 
         <View className={styles.formItem}>
           <Text className={styles.formLabel}><Text className={styles.required}>*</Text>场馆类型（系统自动分配具体场馆）</Text>
-          <Picker mode="selector" range={venueTypeLabels} value={venueTypeIndex} onChange={(e) => { setVenueTypeIndex(Number(e.detail.value)); setAllocatedVenue(null); setAllocationFailed(false); }}>
+          <Picker mode="selector" range={venueTypeLabels} value={venueTypeIndex} onChange={(e) => { setVenueTypeIndex(Number(e.detail.value)); invalidateAllocation(); }}>
             <View className={styles.pickerTrigger}>
               <Text>{venueTypeLabels[venueTypeIndex]}</Text>
               <Text className={styles.pickerArrow}>▼</Text>
@@ -204,7 +246,7 @@ const BookingPage: React.FC = () => {
 
         <View className={styles.formItem}>
           <Text className={styles.formLabel}><Text className={styles.required}>*</Text>使用日期</Text>
-          <Picker mode="date" value={date} onChange={(e) => { setDate(e.detail.value); setAllocatedVenue(null); setAllocationFailed(false); }}>
+          <Picker mode="date" value={date} onChange={(e) => { setDate(e.detail.value); invalidateAllocation(); }}>
             <View className={styles.pickerTrigger}>
               <Text className={!date ? styles.pickerPlaceholder : ''}>{date || '请选择日期'}</Text>
               <Text className={styles.pickerArrow}>▼</Text>
@@ -215,7 +257,7 @@ const BookingPage: React.FC = () => {
         <View className={styles.timeRow}>
           <View className={styles.timeCol}>
             <Text className={styles.formLabel}><Text className={styles.required}>*</Text>开始时间</Text>
-            <Picker mode="time" value={startTime} onChange={(e) => { setStartTime(e.detail.value); setAllocatedVenue(null); setAllocationFailed(false); }}>
+            <Picker mode="time" value={startTime} onChange={(e) => { setStartTime(e.detail.value); invalidateAllocation(); }}>
               <View className={styles.pickerTrigger}>
                 <Text className={!startTime ? styles.pickerPlaceholder : ''}>{startTime || '开始'}</Text>
                 <Text className={styles.pickerArrow}>▼</Text>
@@ -224,7 +266,7 @@ const BookingPage: React.FC = () => {
           </View>
           <View className={styles.timeCol}>
             <Text className={styles.formLabel}><Text className={styles.required}>*</Text>结束时间</Text>
-            <Picker mode="time" value={endTime} onChange={(e) => { setEndTime(e.detail.value); setAllocatedVenue(null); setAllocationFailed(false); }}>
+            <Picker mode="time" value={endTime} onChange={(e) => { setEndTime(e.detail.value); invalidateAllocation(); }}>
               <View className={styles.pickerTrigger}>
                 <Text className={!endTime ? styles.pickerPlaceholder : ''}>{endTime || '结束'}</Text>
                 <Text className={styles.pickerArrow}>▼</Text>
@@ -279,6 +321,14 @@ const BookingPage: React.FC = () => {
         <View className={styles.allocateBtn} onClick={handleAllocate}>
           <Text className={styles.allocateBtnText}>🔍 智能分配场馆</Text>
         </View>
+
+        {allocationStale && (
+          <View className={styles.allocateStale}>
+            <Text className={styles.allocateStaleText}>
+              ⚠️ 时间或场馆类型已变更，之前的分配结果已失效，请重新分配
+            </Text>
+          </View>
+        )}
 
         {allocatedVenue && (
           <View className={styles.allocateResult}>

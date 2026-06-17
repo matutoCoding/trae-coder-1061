@@ -316,3 +316,63 @@
   padding: 4rpx 12rpx;
   border-radius: $radius-round;
 }
+
+.venueScroll {
+  width: 100%;
+  white-space: nowrap;
+  margin: 0 (-$spacing-lg);
+  padding: 0 $spacing-lg;
+  box-sizing: border-box;
+}
+
+.venueQuickCard {
+  display: inline-block;
+  width: 240rpx;
+  margin-right: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  vertical-align: top;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.venueQuickImage {
+  width: 100%;
+  height: 140rpx;
+  display: block;
+}
+
+.venueQuickInfo {
+  padding: $spacing-sm;
+}
+
+.venueQuickName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 8rpx;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.venueQuickType {
+  font-size: 20rpx;
+  color: $color-primary;
+  background: rgba($color-primary, 0.1);
+  padding: 4rpx 10rpx;
+  border-radius: 4rpx;
+  display: inline-block;
+  margin-bottom: 8rpx;
+}
+
+.venueQuickCapacity {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  display: block;
+}
