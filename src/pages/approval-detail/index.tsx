@@ -7,14 +7,87 @@ import { ApprovalRole, APPROVAL_ROLE_LABELS, APPROVAL_ROLE_ICONS } from '@/types
 import CountersignProgress from '@/components/CountersignProgress';
 import styles from './index.module.scss';
 
+const calcMinSecurity = (attendees: number): number => {
+  if (attendees <= 0) return 1;
+  if (attendees <= 50) return 1;
+  if (attendees <= 100) return 2;
+  if (attendees <= 300) return 5;
+  return 10;
+};
+
+const calcDurationHours = (startTime: string, endTime: string): number => {
+  const [startH, startM] = startTime.split(':').map(Number);
+  const [endH, endM] = endTime.split(':').map(Number);
+  return (endH * 60 + endM - startH * 60 - startM) / 60;
+};
+
 const ApprovalDetailPage: React.FC = () => {
   const router = useRouter();
-  const { approvals, approveItem, rejectItem } = useAppStore();
+  const { approvals, venues, bookings, approveItem, rejectItem } = useAppStore();
 
   const approval = useMemo(
     () => approvals.find((a) => a.id === router.params.id),
     [approvals, router.params.id]
   );
+
+  const booking = useMemo(
+    () => bookings.find((b) => b.id === approval?.bookingId),
+    [bookings, approval]
+  );
+
+  const venue = useMemo(() => {
+    if (!approval) return null;
+    const matched = venues.find((v) => v.name === approval.venueTypeName);
+    if (matched) return matched;
+    if (booking) return venues.find((v) => v.id === booking.assignedVenueId) || null;
+    return null;
+  }, [approval, booking, venues]);
+
+  const capacityCheck = useMemo(() => {
+    if (!approval) return null;
+    const attendees = approval.expectedAttendees;
+    if (venue) {
+      return {
+        pass: attendees <= venue.capacity,
+        attendees,
+        capacity: venue.capacity,
+        remaining: venue.capacity - attendees,
+      };
+    }
+    return {
+      pass: true,
+      attendees,
+      capacity: null,
+      remaining: null,
+    };
+  }, [approval, venue]);
+
+  const securityCheck = useMemo(() => {
+    if (!approval) return null;
+    const minRequired = calcMinSecurity(approval.expectedAttendees);
+    return {
+      pass: approval.securityRequired >= minRequired,
+      provided: approval.securityRequired,
+      minRequired,
+    };
+  }, [approval]);
+
+  const costEstimate = useMemo(() => {
+    if (!approval) return null;
+    const duration = calcDurationHours(approval.startTime, approval.endTime);
+    if (venue) {
+      return {
+        duration,
+        hourlyRate: venue.hourlyRate,
+        total: Math.round(duration * venue.hourlyRate * 100) / 100,
+      };
+    }
+    return {
+      duration,
+      hourlyRate: null,
+      total: null,
+    };
+  }, [approval, venue]);
 
   if (!approval) {
     return (
@@ -110,6 +183,120 @@ const ApprovalDetailPage: React.FC = () => {
           <Text className={styles.infoIcon}>🛡️</Text>
           <Text className={styles.infoLabel}>安保人数</Text>
           <Text className={styles.infoValue}>{approval.securityRequired} 名</Text>
+        </View>
+      </View>
+
+      <View className={styles.checkCard}>
+        <Text className={styles.cardTitle}>业务审核校验</Text>
+
+        <View className={styles.checkItem}>
+          <View className={styles.checkHeader}>
+            <Text className={styles.checkIcon}>👥</Text>
+            <Text className={styles.checkLabel}>场馆容量校验</Text>
+            {capacityCheck?.pass ? (
+              <Text className={styles.checkPass}>✓ 达标</Text>
+            ) : (
+              <Text className={styles.checkFail}>✗ 不达标</Text>
+            )}
+          </View>
+          <View className={styles.checkBody}>
+            <View className={styles.checkRow}>
+              <Text className={styles.checkKey}>活动人数</Text>
+              <Text className={styles.checkVal}>{approval.expectedAttendees} 人</Text>
+            </View>
+            <View className={styles.checkRow}>
+              <Text className={styles.checkKey}>场馆容量</Text>
+              <Text className={styles.checkVal}>{capacityCheck?.capacity ?? '未知'} 人</Text>
+            </View>
+            <View className={styles.checkRow}>
+              <Text className={styles.checkKey}>空余容量</Text>
+              <Text
+                className={classnames(
+                  styles.checkVal,
+                  capacityCheck?.pass ? styles.checkValOk : styles.checkValWarn
+                )}
+              >
+                {capacityCheck?.remaining !== null && capacityCheck?.remaining !== undefined
+                  ? `${capacityCheck.remaining} 人`
+                  : '未知'}
+              </Text>
+            </View>
+            {!capacityCheck?.pass && (
+              <View className={styles.checkWarn}>
+                <Text className={styles.checkWarnText}>
+                  ⚠️ 活动人数超出场馆容量，建议更换更大场馆或减少人数
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        <View className={styles.checkItem}>
+          <View className={styles.checkHeader}>
+            <Text className={styles.checkIcon}>🛡️</Text>
+            <Text className={styles.checkLabel}>安保核定校验</Text>
+            {securityCheck?.pass ? (
+              <Text className={styles.checkPass}>✓ 达标</Text>
+            ) : (
+              <Text className={styles.checkFail}>✗ 不达标</Text>
+            )}
+          </View>
+          <View className={styles.checkBody}>
+            <View className={styles.checkRow}>
+              <Text className={styles.checkKey}>申请安保</Text>
+              <Text className={styles.checkVal}>{securityCheck?.provided ?? 0} 名</Text>
+            </View>
+            <View className={styles.checkRow}>
+              <Text className={styles.checkKey}>最低要求</Text>
+              <Text className={styles.checkVal}>{securityCheck?.minRequired ?? 0} 名</Text>
+            </View>
+            <View className={styles.checkRow}>
+              <Text className={styles.checkKey}>缺口</Text>
+              <Text
+                className={classnames(
+                  styles.checkVal,
+                  securityCheck?.pass ? styles.checkValOk : styles.checkValWarn
+                )}
+              >
+                {securityCheck?.pass
+                  ? '无缺口'
+                  : `缺 ${(securityCheck?.minRequired ?? 0) - (securityCheck?.provided ?? 0)} 名`}
+              </Text>
+            </View>
+            {!securityCheck?.pass && (
+              <View className={styles.checkWarn}>
+                <Text className={styles.checkWarnText}>
+                  ⚠️ 安保人数不足，按标准需至少 {securityCheck?.minRequired} 名安保人员
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        <View className={styles.checkItem}>
+          <View className={styles.checkHeader}>
+            <Text className={styles.checkIcon}>💰</Text>
+            <Text className={styles.checkLabel}>费用估算</Text>
+            <Text className={styles.checkInfo}>参考</Text>
+          </View>
+          <View className={styles.checkBody}>
+            <View className={styles.checkRow}>
+              <Text className={styles.checkKey}>使用时长</Text>
+              <Text className={styles.checkVal}>{costEstimate?.duration ?? 0} 小时</Text>
+            </View>
+            <View className={styles.checkRow}>
+              <Text className={styles.checkKey}>小时费率</Text>
+              <Text className={styles.checkVal}>
+                {costEstimate?.hourlyRate !== null ? `¥${costEstimate?.hourlyRate}/时` : '未知'}
+              </Text>
+            </View>
+            <View className={styles.checkRow}>
+              <Text className={styles.checkKey}>预估费用</Text>
+              <Text className={classnames(styles.checkVal, styles.checkValHighlight)}>
+                {costEstimate?.total !== null ? `¥${costEstimate?.total}` : '待核算'}
+              </Text>
+            </View>
+          </View>
         </View>
       </View>
 

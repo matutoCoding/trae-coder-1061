@@ -267,3 +267,52 @@
   font-size: $font-size-sm;
   color: $color-text-tertiary;
 }
+
+.dateNav {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.dateNavBtn {
+  width: 44rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-page;
+  border-radius: $radius-round;
+}
+
+.dateNavText {
+  font-size: 20rpx;
+  color: $color-text-secondary;
+}
+
+.datePicker {
+  padding: 8rpx 20rpx;
+  background: $color-bg-page;
+  border-radius: $radius-sm;
+}
+
+.datePickerText {
+  font-size: $font-size-xs;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.sectionSubHeader {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: $spacing-md;
+}
+
+.todayTag {
+  font-size: 20rpx;
+  color: $color-primary;
+  background: rgba($color-primary, 0.1);
+  padding: 4rpx 12rpx;
+  border-radius: $radius-round;
+}

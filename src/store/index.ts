@@ -45,7 +45,7 @@ interface AppState {
   approveItem: (approvalId: string, role: ApprovalRole) => void;
   rejectItem: (approvalId: string, role: ApprovalRole, comment: string) => void;
   autoAllocate: (venueType: Venue['type'], date: string, startTime: string, endTime: string) => Venue | null;
-  createBookingWithApproval: (bookingData: Omit<Booking, 'id' | 'status' | 'assignedVenueId' | 'assignedVenueName' | 'createdAt'>) => { booking: Booking; approval: Approval } | null;
+  createBookingWithApproval: (bookingData: Omit<Booking, 'id' | 'status' | 'assignedVenueId' | 'assignedVenueName' | 'createdAt'>, venueId?: string) => { booking: Booking; approval: Approval } | null;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -139,13 +139,33 @@ export const useAppStore = create<AppState>((set, get) => ({
     return allocateVenue(get().venues, get().bookings, venueType, date, startTime, endTime);
   },
 
-  createBookingWithApproval: (bookingData) => {
-    const venue = get().autoAllocate(
-      bookingData.venueType,
-      bookingData.date,
-      bookingData.startTime,
-      bookingData.endTime
-    );
+  createBookingWithApproval: (bookingData, venueId?) => {
+    let venue: Venue | null | undefined = undefined;
+
+    if (venueId) {
+      venue = get().venues.find((v) => v.id === venueId) || null;
+      if (venue) {
+        const hasConflict = get().bookings.some((b) =>
+          b.assignedVenueId === venueId &&
+          b.date === bookingData.date &&
+          b.status !== 'rejected' &&
+          !(bookingData.endTime <= b.startTime || bookingData.startTime >= b.endTime)
+        );
+        if (hasConflict) {
+          console.warn('[Booking] Pre-allocated venue has time conflict, re-allocating...');
+          venue = null;
+        }
+      }
+    }
+
+    if (!venue) {
+      venue = get().autoAllocate(
+        bookingData.venueType,
+        bookingData.date,
+        bookingData.startTime,
+        bookingData.endTime
+      );
+    }
 
     if (!venue) {
       console.error('[Booking] No available venue found for allocation');

@@ -203,3 +203,169 @@
   font-size: $font-size-md;
   color: $color-text-tertiary;
 }
+
+.timelineCard {
+  background: $color-bg-card;
+  margin: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.timelineHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.dateNav {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.dateNavBtn {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-page;
+  border-radius: $radius-round;
+}
+
+.dateNavBtnText {
+  font-size: 20rpx;
+  color: $color-text-secondary;
+}
+
+.datePicker {
+  padding: 8rpx 20rpx;
+  background: $color-bg-page;
+  border-radius: $radius-sm;
+}
+
+.datePickerText {
+  font-size: $font-size-xs;
+  color: $color-primary;
+  white-space: nowrap;
+}
+
+.legend {
+  display: flex;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-md;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.legendDot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 4rpx;
+}
+
+.legendDotOccupied {
+  background: #F59E0B;
+}
+
+.legendDotFree {
+  background: #10B981;
+}
+
+.legendText {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.timelineScroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.timeline {
+  display: inline-flex;
+  gap: 8rpx;
+  padding: 4rpx;
+}
+
+.timelineSlot {
+  width: 120rpx;
+  height: 160rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: $radius-sm;
+  padding: 12rpx 8rpx;
+  flex-shrink: 0;
+}
+
+.timelineSlotOccupied {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.timelineSlotFree {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px dashed rgba(16, 185, 129, 0.3);
+}
+
+.timelineSlotClickable {
+  cursor: pointer;
+}
+
+.timelineSlotTime {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+}
+
+.timelineSlotBooking {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+.timelineSlotTitle {
+  font-size: 20rpx;
+  color: #D97706;
+  font-weight: $font-weight-medium;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timelineSlotOrganizer {
+  font-size: 18rpx;
+  color: $color-text-tertiary;
+  text-align: center;
+  margin-top: 4rpx;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timelineSlotFreeInner {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timelineSlotFreeText {
+  font-size: 20rpx;
+  color: #10B981;
+  font-weight: $font-weight-medium;
+}

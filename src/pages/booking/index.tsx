@@ -28,7 +28,7 @@ const BookingPage: React.FC = () => {
   const [endTime, setEndTime] = useState('');
   const [purpose, setPurpose] = useState('');
   const [securityRequired, setSecurityRequired] = useState('');
-  const [allocatedVenue, setAllocatedVenue] = useState<{ name: string; location: string; capacity: number } | null>(null);
+  const [allocatedVenue, setAllocatedVenue] = useState<{ id: string; name: string; location: string; capacity: number } | null>(null);
   const [allocationFailed, setAllocationFailed] = useState(false);
 
   const venueTypeLabels = VENUE_TYPE_LIST.map((v) => v.label);
@@ -64,7 +64,7 @@ const BookingPage: React.FC = () => {
     const result = allocateVenue(venues, bookings, selectedType, date, startTime, endTime);
 
     if (result) {
-      setAllocatedVenue({ name: result.name, location: result.location, capacity: result.capacity });
+      setAllocatedVenue({ id: result.id, name: result.name, location: result.location, capacity: result.capacity });
       setAllocationFailed(false);
       console.info('[Booking] Allocated venue:', result.name);
     } else {
@@ -113,7 +113,7 @@ const BookingPage: React.FC = () => {
       endTime,
       securityRequired: securityNum,
       purpose,
-    });
+    }, allocatedVenue?.id);
 
     if (result) {
       Taro.showToast({ title: '预订提交成功', icon: 'success' });
@@ -194,7 +194,7 @@ const BookingPage: React.FC = () => {
 
         <View className={styles.formItem}>
           <Text className={styles.formLabel}><Text className={styles.required}>*</Text>场馆类型（系统自动分配具体场馆）</Text>
-          <Picker mode="selector" range={venueTypeLabels} value={venueTypeIndex} onChange={(e) => setVenueTypeIndex(Number(e.detail.value))}>
+          <Picker mode="selector" range={venueTypeLabels} value={venueTypeIndex} onChange={(e) => { setVenueTypeIndex(Number(e.detail.value)); setAllocatedVenue(null); setAllocationFailed(false); }}>
             <View className={styles.pickerTrigger}>
               <Text>{venueTypeLabels[venueTypeIndex]}</Text>
               <Text className={styles.pickerArrow}>▼</Text>

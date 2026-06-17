@@ -332,3 +332,114 @@
   font-size: $font-size-md;
   color: $color-text-tertiary;
 }
+
+.checkCard {
+  background: $color-bg-card;
+  margin: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.checkItem {
+  margin-bottom: $spacing-md;
+  border: 2rpx solid $color-border;
+  border-radius: $radius-sm;
+  overflow: hidden;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.checkHeader {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md $spacing-md;
+  background: $color-bg-page;
+  gap: 12rpx;
+}
+
+.checkIcon {
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.checkLabel {
+  flex: 1;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.checkPass {
+  font-size: $font-size-xs;
+  color: $color-success;
+  font-weight: $font-weight-medium;
+}
+
+.checkFail {
+  font-size: $font-size-xs;
+  color: $color-error;
+  font-weight: $font-weight-medium;
+}
+
+.checkInfo {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  background: $color-bg-page;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-round;
+}
+
+.checkBody {
+  padding: $spacing-md;
+}
+
+.checkRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.checkKey {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.checkVal {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.checkValOk {
+  color: $color-success;
+}
+
+.checkValWarn {
+  color: $color-error;
+}
+
+.checkValHighlight {
+  color: $color-warning;
+  font-size: $font-size-md;
+}
+
+.checkWarn {
+  margin-top: $spacing-sm;
+  padding: $spacing-sm;
+  background: rgba($color-warning, 0.06);
+  border-radius: $radius-sm;
+}
+
+.checkWarnText {
+  font-size: $font-size-xs;
+  color: $color-warning;
+  line-height: $line-height-normal;
+}

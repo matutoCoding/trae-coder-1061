@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { View, Text } from '@tarojs/components';
+import React, { useMemo, useState } from 'react';
+import { View, Text, Picker } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAppStore } from '@/store';
 import { formatDate, getWeekday } from '@/utils/format';
@@ -10,10 +10,11 @@ import styles from './index.module.scss';
 const HomePage: React.FC = () => {
   const { venues, bookings, approvals } = useAppStore();
   const today = dayjs().format('YYYY-MM-DD');
+  const [selectedDate, setSelectedDate] = useState(today);
 
-  const todayBookings = useMemo(
-    () => bookings.filter((b) => b.date === today).sort((a, b) => a.startTime.localeCompare(b.startTime)),
-    [bookings, today]
+  const dateBookings = useMemo(
+    () => bookings.filter((b) => b.date === selectedDate).sort((a, b) => a.startTime.localeCompare(b.startTime)),
+    [bookings, selectedDate]
   );
 
   const pendingApprovals = useMemo(
@@ -25,6 +26,20 @@ const HomePage: React.FC = () => {
     () => venues.filter((v) => v.status === 'available'),
     [venues]
   );
+
+  const handlePrevDay = () => {
+    setSelectedDate(dayjs(selectedDate).subtract(1, 'day').format('YYYY-MM-DD'));
+  };
+
+  const handleNextDay = () => {
+    setSelectedDate(dayjs(selectedDate).add(1, 'day').format('YYYY-MM-DD'));
+  };
+
+  const handleDateChange = (e) => {
+    setSelectedDate(e.detail.value);
+  };
+
+  const isToday = selectedDate === today;
 
   const handleGoBooking = () => {
     Taro.switchTab({ url: '/pages/booking/index' });
@@ -66,8 +81,8 @@ const HomePage: React.FC = () => {
           <Text className={styles.statLabel}>空闲场馆</Text>
         </View>
         <View className={styles.statCard}>
-          <Text className={styles.statValue}>{todayBookings.length}</Text>
-          <Text className={styles.statLabel}>今日预订</Text>
+          <Text className={styles.statValue}>{dateBookings.length}</Text>
+          <Text className={styles.statLabel}>当日预订</Text>
         </View>
         <View className={styles.statCard}>
           <Text className={styles.statValue}>{pendingApprovals.length}</Text>
@@ -103,7 +118,7 @@ const HomePage: React.FC = () => {
             <Text className={styles.quickActionDesc}>今日排期总览</Text>
           </View>
         </View>
-        <View className={styles.quickAction} onClick={() => Taro.navigateTo({ url: '/pages/venue-detail/index?id=v001' })}>
+        <View className={styles.quickAction} onClick={() => Taro.navigateTo({ url: '/pages/venues/index' })}>
           <View className={`${styles.quickActionIcon} ${styles.quickActionIconQuery}`}>
             🔍
           </View>
@@ -116,12 +131,30 @@ const HomePage: React.FC = () => {
 
       <View className={styles.section}>
         <View className={styles.sectionHeader}>
-          <Text className={styles.sectionTitle}>今日排期</Text>
-          <Text className={styles.sectionMore}>共{todayBookings.length}项</Text>
+          <Text className={styles.sectionTitle}>排期总览</Text>
+          <View className={styles.dateNav}>
+            <View className={styles.dateNavBtn} onClick={handlePrevDay}>
+              <Text className={styles.dateNavText}>◀</Text>
+            </View>
+            <Picker mode="date" value={selectedDate} onChange={handleDateChange}>
+              <View className={styles.datePicker}>
+                <Text className={styles.datePickerText}>
+                  {formatDate(selectedDate)} {getWeekday(selectedDate)}
+                </Text>
+              </View>
+            </Picker>
+            <View className={styles.dateNavBtn} onClick={handleNextDay}>
+              <Text className={styles.dateNavText}>▶</Text>
+            </View>
+          </View>
         </View>
-        {todayBookings.length > 0 ? (
+        <View className={styles.sectionSubHeader}>
+          <Text className={styles.sectionMore}>共 {dateBookings.length} 项排期</Text>
+          {isToday && <Text className={styles.todayTag}>今天</Text>}
+        </View>
+        {dateBookings.length > 0 ? (
           <View className={styles.scheduleList}>
-            {todayBookings.map((booking) => (
+            {dateBookings.map((booking) => (
               <View
                 key={booking.id}
                 className={styles.scheduleCard}
@@ -157,7 +190,7 @@ const HomePage: React.FC = () => {
           </View>
         ) : (
           <View className={styles.emptyTip}>
-            <Text className={styles.emptyText}>今日暂无排期</Text>
+            <Text className={styles.emptyText}>当日暂无排期</Text>
           </View>
         )}
       </View>

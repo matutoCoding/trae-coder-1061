@@ -4,6 +4,7 @@ export default defineAppConfig({
     'pages/booking/index',
     'pages/approval/index',
     'pages/mine/index',
+    'pages/venues/index',
     'pages/venue-detail/index',
     'pages/booking-detail/index',
     'pages/approval-detail/index',
