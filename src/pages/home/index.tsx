@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, Image, ScrollView, Picker } from '@tarojs/components';
 import Taro from '@tarojs/taro';
+import classnames from 'classnames';
 import { useAppStore } from '@/store';
 import { formatDate, getWeekday } from '@/utils/format';
 import { BOOKING_STATUS_LABELS, BOOKING_STATUS_COLORS } from '@/types/booking';
@@ -202,20 +203,48 @@ const HomePage: React.FC = () => {
           <Text className={styles.sectionMore} onClick={() => Taro.navigateTo({ url: '/pages/venues/index' })}>全部场馆 →</Text>
         </View>
         <ScrollView scrollX className={styles.venueScroll}>
-          {venues.map((venue) => (
-            <View
-              key={venue.id}
-              className={styles.venueQuickCard}
-              onClick={() => Taro.navigateTo({ url: `/pages/venue-detail/index?id=${venue.id}` })}
-            >
-              <Image className={styles.venueQuickImage} src={venue.image} mode="aspectFill" />
-              <View className={styles.venueQuickInfo}>
-                <Text className={styles.venueQuickName} numberOfLines={1}>{venue.name}</Text>
-                <Text className={styles.venueQuickType}>{VENUE_TYPE_LABELS[venue.type]}</Text>
-                <Text className={styles.venueQuickCapacity}>容纳 {venue.capacity} 人</Text>
+          {venues.map((venue) => {
+            const day0 = today;
+            const day1 = dayjs(today).add(1, 'day').format('YYYY-MM-DD');
+            const day2 = dayjs(today).add(2, 'day').format('YYYY-MM-DD');
+            const countDay = (d: string) => bookings.filter(
+              (b) => b.assignedVenueId === venue.id && b.date === d && b.status !== 'rejected' && b.status !== 'cancelled'
+            ).length;
+            const d0 = countDay(day0);
+            const d1 = countDay(day1);
+            const d2 = countDay(day2);
+
+            return (
+              <View
+                key={venue.id}
+                className={styles.venueQuickCard}
+                onClick={() => Taro.navigateTo({ url: `/pages/venue-detail/index?id=${venue.id}` })}
+              >
+                <Image className={styles.venueQuickImage} src={venue.image} mode="aspectFill" />
+                <View className={styles.venueQuickInfo}>
+                  <Text className={styles.venueQuickName} numberOfLines={1}>{venue.name}</Text>
+                  <Text className={styles.venueQuickType}>{VENUE_TYPE_LABELS[venue.type]}</Text>
+                  <View className={styles.venueQuickBusy}>
+                    <View className={styles.busyDay}>
+                      <Text className={classnames(styles.busyDot, d0 > 0 && styles.busyDotActive)} />
+                      <Text className={styles.busyLabel}>今</Text>
+                      <Text className={styles.busyCount}>{d0}段</Text>
+                    </View>
+                    <View className={styles.busyDay}>
+                      <Text className={classnames(styles.busyDot, d1 > 0 && styles.busyDotActive)} />
+                      <Text className={styles.busyLabel}>明</Text>
+                      <Text className={styles.busyCount}>{d1}段</Text>
+                    </View>
+                    <View className={styles.busyDay}>
+                      <Text className={classnames(styles.busyDot, d2 > 0 && styles.busyDotActive)} />
+                      <Text className={styles.busyLabel}>后</Text>
+                      <Text className={styles.busyCount}>{d2}段</Text>
+                    </View>
+                  </View>
+                </View>
               </View>
-            </View>
-          ))}
+            );
+          })}
         </ScrollView>
       </View>
 

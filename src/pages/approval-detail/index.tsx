@@ -4,6 +4,7 @@ import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import { useAppStore } from '@/store';
 import { ApprovalRole, APPROVAL_ROLE_LABELS, APPROVAL_ROLE_ICONS } from '@/types/approval';
+import { BOOKING_STATUS_LABELS } from '@/types/booking';
 import CountersignProgress from '@/components/CountersignProgress';
 import styles from './index.module.scss';
 
@@ -297,6 +298,55 @@ const ApprovalDetailPage: React.FC = () => {
               </Text>
             </View>
           </View>
+        </View>
+      </View>
+
+      <View className={styles.verifyCard}>
+        <Text className={styles.cardTitle}>核对现场占用</Text>
+        <Text className={styles.verifyDesc}>审批前可查看场馆当天排期和预订详情，核实占用情况</Text>
+        <View className={styles.verifyActions}>
+          {venue && (
+            <View className={styles.verifyBtn} onClick={() => Taro.navigateTo({ url: `/pages/venue-detail/index?id=${venue.id}&date=${approval.date}` })}>
+              <Text className={styles.verifyBtnIcon}>📅</Text>
+              <View className={styles.verifyBtnContent}>
+                <Text className={styles.verifyBtnTitle}>查看场馆排期</Text>
+                <Text className={styles.verifyBtnDesc}>{venue.name} · {approval.date}</Text>
+              </View>
+              <Text className={styles.verifyBtnArrow}>→</Text>
+            </View>
+          )}
+          {booking && (
+            <View className={styles.verifyBtn} onClick={() => Taro.navigateTo({ url: `/pages/booking-detail/index?id=${booking.id}` })}>
+              <Text className={styles.verifyBtnIcon}>📋</Text>
+              <View className={styles.verifyBtnContent}>
+                <Text className={styles.verifyBtnTitle}>查看预订详情</Text>
+                <Text className={styles.verifyBtnDesc}>{booking.title} · {booking.startTime}-{booking.endTime}</Text>
+              </View>
+              <Text className={styles.verifyBtnArrow}>→</Text>
+            </View>
+          )}
+          {venue && (
+            <View className={styles.verifyOccupancy}>
+              <Text className={styles.verifyOccupancyLabel}>当日占用概览</Text>
+              <View className={styles.verifyOccupancySlots}>
+                {(() => {
+                  const dayBookings = bookings.filter(
+                    (b) => b.assignedVenueId === venue.id && b.date === approval.date && b.status !== 'rejected' && b.status !== 'cancelled'
+                  );
+                  if (dayBookings.length === 0) return <Text className={styles.verifyOccupancyFree}>该场馆当日无其他占用</Text>;
+                  return dayBookings.map((b) => (
+                    <View key={b.id} className={styles.verifyOccupancyItem}>
+                      <Text className={styles.verifyOccupancyTime}>{b.startTime}-{b.endTime}</Text>
+                      <Text className={styles.verifyOccupancyName} numberOfLines={1}>{b.title}</Text>
+                      <Text className={classnames(styles.verifyOccupancyStatus, b.id === booking?.id && styles.verifyOccupancyCurrent)}>
+                        {b.id === booking?.id ? '当前' : '占用'}
+                      </Text>
+                    </View>
+                  ));
+                })()}
+              </View>
+            </View>
+          )}
         </View>
       </View>
 

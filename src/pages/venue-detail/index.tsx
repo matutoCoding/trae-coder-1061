@@ -14,7 +14,8 @@ const VenueDetailPage: React.FC = () => {
   const router = useRouter();
   const { venues, bookings } = useAppStore();
   const today = dayjs().format('YYYY-MM-DD');
-  const [selectedDate, setSelectedDate] = useState(today);
+  const initialDate = router.params.date || today;
+  const [selectedDate, setSelectedDate] = useState(initialDate);
 
   const venue = useMemo(
     () => venues.find((v) => v.id === router.params.id),
@@ -71,8 +72,11 @@ const VenueDetailPage: React.FC = () => {
     return slots;
   }, [dateBookings]);
 
-  const handleSlotClick = (slot: { start: string; end: string }) => {
-    if (slot.booking) return;
+  const handleSlotClick = (slot: { start: string; end: string; booking: Booking | null }) => {
+    if (slot.booking) {
+      Taro.navigateTo({ url: `/pages/booking-detail/index?id=${slot.booking.id}` });
+      return;
+    }
     const venueTypeValue = venue?.type || 'basketball';
     useAppStore.getState().setBookingPrefill({
       venueType: venueTypeValue,

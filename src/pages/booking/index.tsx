@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, Input, Picker } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import classnames from 'classnames';
@@ -16,8 +16,7 @@ const calcMinSecurity = (attendees: number): number => {
 };
 
 const BookingPage: React.FC = () => {
-  const { createBookingWithApproval, bookingPrefill, clearBookingPrefill } = useAppStore();
-  const hasInitialized = useRef(false);
+  const { createBookingWithApproval, clearBookingPrefill } = useAppStore();
 
   const [title, setTitle] = useState('');
   const [organizer, setOrganizer] = useState('');
@@ -35,7 +34,6 @@ const BookingPage: React.FC = () => {
   const [sourceVenueId, setSourceVenueId] = useState<string | null>(null);
 
   useDidShow(() => {
-    if (hasInitialized.current) return;
     const prefill = useAppStore.getState().bookingPrefill;
     if (prefill) {
       console.info('[Booking] Applied prefill:', prefill);
@@ -47,7 +45,10 @@ const BookingPage: React.FC = () => {
       if (prefill.startTime) setStartTime(prefill.startTime);
       if (prefill.endTime) setEndTime(prefill.endTime);
       if (prefill.sourceVenueId) setSourceVenueId(prefill.sourceVenueId);
-      hasInitialized.current = true;
+      setAllocatedVenue(null);
+      setAllocationFailed(false);
+      setAllocationStale(false);
+      useAppStore.getState().clearBookingPrefill();
     }
   });
 
@@ -146,15 +147,17 @@ const BookingPage: React.FC = () => {
     }, allocatedVenue?.id);
 
     if (result) {
+      const returnDate = date;
+      const returnVenueId = sourceVenueId;
       clearBookingPrefill();
       Taro.showToast({ title: '预订提交成功', icon: 'success' });
       setTimeout(() => {
-        if (sourceVenueId) {
+        if (returnVenueId) {
           Taro.switchTab({
             url: '/pages/home/index',
             success: () => {
               setTimeout(() => {
-                Taro.navigateTo({ url: `/pages/venue-detail/index?id=${sourceVenueId}` });
+                Taro.navigateTo({ url: `/pages/venue-detail/index?id=${returnVenueId}&date=${returnDate}` });
               }, 100);
             },
           });
